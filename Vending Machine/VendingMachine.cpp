@@ -72,7 +72,7 @@ void insertMoney() {
     cout << "\nEnter the value in pence (example 200 = GBP 2.00): ";
     int value; // Stores user input.
 
-    if (!(cin >> value)) { // Checks if minput is invalid.
+    if (!(cin >> value)) { // Checks if input is invalid.
         clearInput(); // Clear input buffer.
         cout << "Invalid input. No money added.\n"; // Shows error message.
         return; // Exit the function early.
@@ -82,10 +82,10 @@ void insertMoney() {
         return;
     }
     
-    creditPence += value;
-    cout << "Money inserted successfully.\n";
-    cout << "Current credit: GBP " << fixed << setprecision(2)
-         << (creditPence / 100.0) << "\n"; 
+    creditPence += value; // Adds the value entered by the user (in pence)to the current credit stored in the machine.
+    cout << "Money inserted successfully.\n"; // Displays a confirmation message informing the user that the money was added.
+    cout << "Current credit: GBP " << fixed << setprecision(2) // Prints a label and formats the number to always show two decimal places.
+         << (creditPence / 100.0) << "\n";  // Converts the credit from pence to pounds and displays the update balance.
 }
 
 // Searches for product by code
@@ -128,17 +128,17 @@ void buyItem() {
         cout << "Invalid input. Try again.\n";
         return;
     }
-    Item* item = findItemByCode(code);
+    Item* item = findItemByCode(code); // If product not found, shows the message invalid input.
     if (item == nullptr) {
         cout << "Invalid code. Product not found.\n";
         return;
     }
-    if (item->stock <= 0) {
+    if (item->stock <= 0) { // Item has no stock.
         cout << "Sorry,  \"" << item->name << "\"is out of stock.\n";
         return;
     }
-    if (creditPence < item->pricePence) {
-        int missing = item->pricePence - creditPence;
+    if (creditPence < item->pricePence) { // If user has not enough money.
+        int missing = item->pricePence - creditPence; // Calculates missing amount.
         cout << "Not enough credit to buy \"" << item->name << "\".\n";
         cout << "Missing GBP " << fixed << setprecision(2)
              << (missing / 100.0) << "\n";
@@ -146,79 +146,78 @@ void buyItem() {
     }
 
     // Purchase successful.
-    creditPence -= item->pricePence;
-    item->stock -= 1;
+    creditPence -= item->pricePence; // Deducts price from credit.
+    item->stock -= 1; // Reduces stock with each item sold.
 
-    cout << "\nDispensing: " << item->name << "...\n";
+    cout << "\nDispensing: " << item->name << "...\n"; // Simulates vending.
     cout << "Purchase successful.\n";
     cout << "Remainig credit: GBP " << fixed << setprecision(2)
          << (creditPence / 100.0) << "\n";
 
-         suggestExtra(*item);
+         suggestExtra(*item); // Suggests complimentary item.
 }
 
 // Return any remaining credit user.
 void returnChange() {
-    if (creditPence <=0) {
+    if (creditPence <=0) { // Checks if there is no change.
         cout << "\nNo change available.\n";
         return;
     }
     cout << "\nReturning change: GBP " << fixed << setprecision(2)
          << (creditPence / 100.0) << "\n";
-    creditPence = 0;
+    creditPence = 0; // Resets credit to zero.
 }
 
-// Main program Loop.
+// Main program Loop. Keeps program running until user exits.
 void run() {
-    bool running = true;
+    bool running = true; // Controls loop.
 
-    while (running) {
-        showMenu();
+    while (running) { // Loop continues until false.
+        showMenu(); // Shows menu again.
 
-        int option;
-        if (!(cin >> option)) {
+        int option; // Stores user selection.
+        if (!(cin >> option)) { // Handles invalid input.
             clearInput();
             cout << "Invalid input. Try again.\n";
             continue;
         }
 
-        switch (option) {
+        switch (option) { // Handles user selection.
             case 1:
-                insertMoney();
+                insertMoney(); // Calls money insertion function.
                 break;
             case 2:
-                buyItem();
+                buyItem(); // Calls buying function
                 break;
             case 3:
-                returnChange();
+                returnChange(); // Returns remaining money.
                 break;
             case 4:
-                if (creditPence > 0) {
+                if (creditPence > 0) { // If user still has credit.
                     cout << "\nYou still have credit.\n";
                     returnChange();
                 }
                 cout << "\nThank you for using the Vending Machine.\n";
-                running = false;
+                running = false; // End loop.
                 break;
             default:
-                cout << "Invalid option. Choose 1 to 4.\n";
+                cout << "Invalid option. Choose 1 to 4.\n"; // Error for invalid menu choice.
                 break;
         }
     }
 }
 private:
-
-// Cleans incorrect input to avoid infinite Loops.
+// Cleans incorrect input from cin to avoid infinite Loops.
 void clearInput() {
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.clear(); // Clear error flags.
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Removes lefover input.
 }
 };
 
 // Main function. Program starts here.
 int main() {
-    VendingMachine machine;
-    machine.run();
+    VendingMachine machine; // Creates vending machine object.
+    machine.run(); // Starts the program loop.
 
-    return 0;
+    return 0; // Ends program.
 }
